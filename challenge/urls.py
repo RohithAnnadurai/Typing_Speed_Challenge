@@ -13,4 +13,5 @@ urlpatterns = [
     path('logout/', LogoutView.as_view(next_page='login'),name='logout'),
     path('dashboard/', dashboard_view, name='dashboard'),
     path('typing-test/', views.typing_test_view,name='typing_test'),
+    path('save-result/', views.save_typing_result, name='save_typing_result'),
 ]

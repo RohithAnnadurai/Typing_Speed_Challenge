@@ -19,4 +19,5 @@ urlpatterns = [
     # Dashboard
     path('dashboard/', views.dashboard_view, name='dashboard'),
     path('typing-test/', views.typing_test_view, name='typing_test'),
+    path('save-typing-result/', views.save_typing_result, name='save_typing_result'),
 ]

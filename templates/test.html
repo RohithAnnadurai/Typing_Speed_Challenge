@@ -1,164 +1,205 @@
 
 {% extends 'base.html' %}
 {% load static %}
+
 {% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
 
-<div class="container py-5">
-
-    {% if passage %}
-
-    <!-- Page Heading -->
-    <div class="text-center mb-4">
-        <h2 class="fw-bold">Typing Speed Challenge</h2>
-        <p class="text-muted">
-            Improve your typing speed and accuracy with daily practice.
-        </p>
-    </div>
-
-    <!-- Typing Statistics -->
-    <div class="row g-3 mb-4">
-
-        <div class="col-md-4">
-            <div class="card shadow-sm text-center">
+            <div class="card shadow-sm mb-4">
                 <div class="card-body">
-                    <h6 class="text-muted">Time Left</h6>
-                    <h2 id="timer" class="text-primary fw-bold">
-                        60
-                    </h2>
-                    <small class="text-muted">Seconds</small>
+                    <h2 class="text-center mb-4">Typing Speed Challenge</h2>
+
+                    {% if passage %}
+
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                            <h5 class="mb-1">{{ passage.title }}</h5>
+                            <span class="badge bg-secondary">
+                                {{ passage.get_difficulty_display }}
+                            </span>
+                        </div>
+                        <div class="text-end">
+                            <h3 class="text-primary mb-0">
+                                <span id="timer">60</span>
+                            </h3>
+                            <small class="text-muted">Seconds</small>
+                        </div>
+                    </div>
+
+                    <div
+                        id="passage-text"
+                        data-passage-id="{{ passage.id }}"
+                        data-save-url="{% url 'save_typing_result' %}"
+                        class="p-3 bg-light border rounded mb-4"
+                        style="font-size: 18px; line-height: 1.8; white-space: pre-wrap;"
+                    >{{ passage.content }}</div>
+
+                    <form id="csrf-form" class="d-none">
+                        {% csrf_token %}
+                    </form>
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <div class="card bg-primary text-white text-center h-100">
+                                <div class="card-body">
+                                    <h3 id="typed-count">0</h3>
+                                    <p class="mb-0">Typed Characters</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="card bg-success text-white text-center h-100">
+                                <div class="card-body">
+                                    <h3 id="remaining-count">0</h3>
+                                    <p class="mb-0">Remaining Characters</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="progress mb-3" style="height: 10px;">
+                        <div
+                            id="typing-progress"
+                            class="progress-bar"
+                            role="progressbar"
+                            style="width: 0%;"
+                            aria-valuenow="0"
+                            aria-valuemin="0"
+                            aria-valuemax="100"
+                        ></div>
+                    </div>
+
+                    <textarea
+                        id="typing-input"
+                        class="form-control mb-3"
+                        rows="5"
+                        placeholder="Click Start Test and begin typing..."
+                        disabled
+                    ></textarea>
+
+                    <div class="d-flex flex-wrap gap-2">
+                        <button
+                            type="button"
+                            id="start-btn"
+                            class="btn btn-primary"
+                        >
+                            Start Test
+                        </button>
+
+                        <button
+                            type="button"
+                            id="reset-btn"
+                            class="btn btn-secondary"
+                        >
+                            Reset
+                        </button>
+                    </div>
+
+                    <p
+                        id="test-status"
+                        class="text-muted mt-3 mb-0"
+                    >
+                        Click Start Test to begin.
+                    </p>
+
+                    <div
+                        id="result-card"
+                        class="card border-primary mt-4 d-none"
+                    >
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">Your Test Results</h5>
+                        </div>
+
+                        <div class="card-body">
+                            <div class="row g-3 text-center">
+                                <div class="col-6 col-md-4">
+                                    <div class="border rounded p-3">
+                                        <h3
+                                            id="result-wpm"
+                                            class="text-primary"
+                                        >0</h3>
+                                        <p class="mb-0">WPM</p>
+                                    </div>
+                                </div>
+
+                                <div class="col-6 col-md-4">
+                                    <div class="border rounded p-3">
+                                        <h3
+                                            id="result-accuracy"
+                                            class="text-success"
+                                        >0%</h3>
+                                        <p class="mb-0">Accuracy</p>
+                                    </div>
+                                </div>
+
+                                <div class="col-6 col-md-4">
+                                    <div class="border rounded p-3">
+                                        <h3
+                                            id="result-time"
+                                            class="text-info"
+                                        >0 sec</h3>
+                                        <p class="mb-0">Time Taken</p>
+                                    </div>
+                                </div>
+
+                                <div class="col-6 col-md-6">
+                                    <div class="border rounded p-3">
+                                        <h3
+                                            id="result-correct"
+                                            class="text-success"
+                                        >0</h3>
+                                        <p class="mb-0">Correct Characters</p>
+                                    </div>
+                                </div>
+
+                                <div class="col-12 col-md-6">
+                                    <div class="border rounded p-3">
+                                        <h3
+                                            id="result-incorrect"
+                                            class="text-danger"
+                                        >0</h3>
+                                        <p class="mb-0">Incorrect Characters</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <p
+                                id="save-status"
+                                class="text-muted mt-3"
+                            >
+                                Your result will be saved after the test.
+                            </p>
+
+                            <button
+                                type="button"
+                                id="try-again-btn"
+                                class="btn btn-success mt-2"
+                            >
+                                Try Again
+                            </button>
+                        </div>
+                    </div>
+
+                    {% else %}
+
+                    <div class="alert alert-warning text-center">
+                        <h5>No typing passages available</h5>
+                        <p class="mb-0">
+                            Please add typing passages through the Django admin.
+                        </p>
+                    </div>
+
+                    {% endif %}
+
                 </div>
             </div>
-        </div>
 
-        <div class="col-md-4">
-            <div class="card shadow-sm text-center">
-                <div class="card-body">
-                    <h6 class="text-muted">Characters Typed</h6>
-                    <h2 id="typed-count" class="text-success fw-bold">
-                        0
-                    </h2>
-                    <small class="text-muted">Characters</small>
-                </div>
-            </div>
         </div>
-
-        <div class="col-md-4">
-            <div class="card shadow-sm text-center">
-                <div class="card-body">
-                    <h6 class="text-muted">Characters Remaining</h6>
-                    <h2 id="remaining-count" class="text-danger fw-bold">
-                        {{ passage.content|length }}
-                    </h2>
-                    <small class="text-muted">Characters</small>
-                </div>
-            </div>
-        </div>
-
     </div>
-
-    <!-- Passage Card -->
-    <div class="card shadow-sm mb-4">
-
-        <div class="card-header bg-primary text-white">
-            <h5 class="mb-0">Typing Passage</h5>
-        </div>
-
-        <div class="card-body">
-
-            <div class="d-flex justify-content-between align-items-center mb-3">
-
-                <h5 class="mb-0">{{ passage.title }}</h5>
-
-                <span class="badge bg-info text-dark">
-                    {{ passage.get_difficulty_display }}
-                </span>
-
-            </div>
-
-            <div
-                id="passage-text"
-                class="p-3 bg-light border rounded"
-                style="font-size: 18px; line-height: 1.8; white-space: pre-wrap;"
-            >{{ passage.content }}</div>
-
-        </div>
-
-    </div>
-
-    <!-- Typing Input Card -->
-    <div class="card shadow-sm">
-
-        <div class="card-body">
-
-            <h5 class="mb-3">Start Typing</h5>
-
-            <textarea
-                id="typing-input"
-                class="form-control mb-3"
-                rows="6"
-                placeholder="Click Start Test and type the passage here..."
-                disabled
-            ></textarea>
-
-            <!-- Progress Bar -->
-            <div class="progress mb-3" style="height: 10px;">
-
-                <div
-                    id="typing-progress"
-                    class="progress-bar"
-                    role="progressbar"
-                    style="width: 0%;"
-                    aria-valuenow="0"
-                    aria-valuemin="0"
-                    aria-valuemax="100"
-                ></div>
-
-            </div>
-
-            <!-- Buttons -->
-            <div class="d-flex gap-2 flex-wrap">
-
-                <button
-                    type="button"
-                    id="start-btn"
-                    class="btn btn-success"
-                >
-                    Start Test
-                </button>
-
-                <button
-                    type="button"
-                    id="reset-btn"
-                    class="btn btn-outline-secondary"
-                >
-                    Reset
-                </button>
-
-            </div>
-
-            <p id="test-status" class="text-muted mt-3 mb-0">
-                Click Start Test to begin.
-            </p>
-
-        </div>
-
-    </div>
-
-    {% else %}
-
-    <!-- No Passage Available -->
-    <div class="alert alert-warning text-center">
-        <h4>No Typing Passage Available</h4>
-
-        <p class="mb-0">
-            Please add a typing passage through the Django Admin panel.
-        </p>
-    </div>
-
-    {% endif %}
-    <script src="{% static 'typing.js' %}"></script>
-
 </div>
 
-
+<script src="{% static 'typing.js' %}"></script>
 {% endblock %}
