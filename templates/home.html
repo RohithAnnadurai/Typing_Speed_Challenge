@@ -1,0 +1,94 @@
+
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - Typing Challenge{% endblock %}
+
+{% block content %}
+
+<div class="container">
+
+    <div class="text-center mb-5">
+
+        <h2>
+            Welcome, {{ user.username }}!
+        </h2>
+
+        <p class="text-muted">
+            Ready to improve your typing speed?
+        </p>
+
+    </div>
+
+    <div class="row g-4">
+
+        <div class="col-md-4">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body text-center p-4">
+
+                    <h5>Start Typing Test</h5>
+
+                    <p class="text-muted">
+                        Test your typing speed and accuracy.
+                    </p>
+
+                    <button class="btn btn-primary" disabled>
+                        Coming in Stage 5
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-4">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body text-center p-4">
+
+                    <h5>My Results</h5>
+
+                    <p class="text-muted">
+                        View your typing performance.
+                    </p>
+
+                    <button class="btn btn-success" disabled>
+                        Coming Soon
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-4">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body text-center p-4">
+
+                    <h5>Leaderboard</h5>
+
+                    <p class="text-muted">
+                        Compare your performance with others.
+                    </p>
+
+                    <button class="btn btn-warning" disabled>
+                        Coming Soon
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
