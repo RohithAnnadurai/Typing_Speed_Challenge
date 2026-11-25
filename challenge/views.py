@@ -50,3 +50,7 @@ class CustomLoginView(LoginView):
 @login_required
 def dashboard_view(request):
     return render(request, 'home.html')
+
+@login_required
+def typing_test_view(request):
+    return render(request, 'test.html')
