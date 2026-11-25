@@ -1,17 +1,17 @@
-from django.contrib import admin
+
 from django.urls import path
-from . import views
 from django.contrib.auth.views import LogoutView
 
-from challenge.views import (register_view, CustomLoginView,dashboard_view,)
+from . import views
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', CustomLoginView.as_view(), name='home'),
-    path('login/', CustomLoginView.as_view(), name='login'),
-    path('register/', register_view, name='register'),
-    path('logout/', LogoutView.as_view(next_page='login'),name='logout'),
-    path('dashboard/', dashboard_view, name='dashboard'),
-    path('typing-test/', views.typing_test_view,name='typing_test'),
-    path('save-result/', views.save_typing_result, name='save_typing_result'),
+    path('', views.CustomLoginView.as_view(), name='home'),
+    path('login/', views.CustomLoginView.as_view(), name='login'),
+    path('register/', views.register_view, name='register'),
+    path('logout/', LogoutView.as_view(next_page='login'), name='logout'),
+
+    path('dashboard/', views.dashboard_view, name='dashboard'),
+    path('typing-test/', views.typing_test_view, name='typing_test'),
+    path('save-typing-result/', views.save_typing_result, name='save_typing_result'),
+    path('typing-history/', views.typing_history_view, name='typing_history'),
 ]

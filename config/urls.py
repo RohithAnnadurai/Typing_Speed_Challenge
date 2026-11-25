@@ -1,12 +1,13 @@
 
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from django.contrib.auth.views import LogoutView
 
 from challenge import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', include('challenge.urls')),
 
     # Homepage
     path('', views.CustomLoginView.as_view(), name='home'),

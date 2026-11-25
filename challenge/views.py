@@ -8,7 +8,7 @@ from django.contrib.auth.views import LoginView
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_protect
 from django.http import JsonResponse
-
+from django.db.models import Avg, Max, Count
 from .models import TypingPassage, TypingResult
 from .forms import RegisterForm
 
@@ -155,3 +155,44 @@ def save_typing_result(request):
             'success': False,
             'message': 'Unable to save the typing result.'
         }, status=500)
+
+@login_required
+def typing_history_view(request):
+    results = TypingResult.objects.filter(
+        user=request.user
+    ).select_related('passage').order_by('-id')
+
+    return render(request, 'typing_history.html', {
+        'results': results
+    })
+
+
+@login_required
+def dashboard_view(request):
+    user_results = TypingResult.objects.filter(user=request.user)
+
+    statistics = user_results.aggregate(
+        total_tests=Count('id'),
+        average_wpm=Avg('wpm'),
+        best_wpm=Max('wpm'),
+        average_accuracy=Avg('accuracy')
+    )
+
+    recent_results = user_results.select_related(
+        'passage'
+    ).order_by('-created_at')[:5]
+
+    leaderboard = TypingResult.objects.values(
+        'user__username'
+    ).annotate(
+        best_wpm=Max('wpm'),
+        total_tests=Count('id')
+    ).order_by('-best_wpm', 'user__username')[:10]
+
+    context = {
+        'statistics': statistics,
+        'recent_results': recent_results,
+        'leaderboard': leaderboard
+    }
+
+    return render(request, 'home.html', context)
