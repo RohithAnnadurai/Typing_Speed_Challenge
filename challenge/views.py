@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
+from .models import TypingPassage
 
 from .forms import RegisterForm
 
@@ -51,6 +52,21 @@ class CustomLoginView(LoginView):
 def dashboard_view(request):
     return render(request, 'home.html')
 
+
 @login_required
 def typing_test_view(request):
-    return render(request, 'test.html')
+
+    passage = TypingPassage.objects.order_by('?').first()
+
+    if passage is None:
+        return render(
+            request,
+            'test.html',
+            {'passage': None}
+        )
+
+    context = {
+        'passage': passage,
+    }
+
+    return render(request,'test.html',context)
